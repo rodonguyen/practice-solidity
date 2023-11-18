@@ -9,8 +9,6 @@ contract myContract {
         contractOwner = msg.sender;
     }
 
-
-
     function countEvenNumbers() public view returns(uint) {
         uint count = 0;
         for (uint i=0; i < nums.length; i++)
