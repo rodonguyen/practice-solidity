@@ -28,11 +28,23 @@
         },
         {
             "files": "*.js",
-            "options": {}
+            "options": {
+                "printWidth": 80,
+                "tabWidth": 2,
+                "useTabs": true,
+                "singleQuote": true,
+                "bracketSpacing": false
+            }
         },
         {
             "files": "*.ts",
-            "options": {}
+            "options": {
+                "printWidth": 80,
+                "tabWidth": 2,
+                "useTabs": true,
+                "singleQuote": true,
+                "bracketSpacing": false
+            }
         }
     ]
 }
