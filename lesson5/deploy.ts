@@ -1,43 +1,44 @@
-import {Wallet, ethers} from 'ethers';
-import * as fs from 'fs-extra';
-import 'dotenv/config';
+import {Wallet, ethers} from 'ethers'
+import * as fs from 'fs-extra'
+import 'dotenv/config'
 
 async function main() {
 	// const url = 'http://127.0.0.1:7545';
 	// const url = 'http://0.0.0.0:7545';
-	const url = process.env.RPC_URL;
-	const provider = new ethers.providers.JsonRpcProvider(url);
+	const url = process.env.RPC_URL
+	const provider = new ethers.providers.JsonRpcProvider(url)
 	// const wallet = new ethers.Wallet(process.env.PRIVATE_KEY!, provider);
 
 	// CREATE WALLET FROM ENCRYPTED PRIVATE KEY
-	const encryptedJson: string = fs.readFileSync('.encryptedKey.json', 'utf8');
-	const password: string = process.env.PRIVATE_KEY_PASSWORD || '';
+	const encryptedJson: string = fs.readFileSync('.encryptedKey.json', 'utf8')
+	const password: string = process.env.PRIVATE_KEY_PASSWORD || ''
 	let wallet: Wallet = ethers.Wallet.fromEncryptedJsonSync(
 		encryptedJson,
 		password
-	);
-	wallet = await wallet.connect(provider);
+	)
+	wallet = await wallet.connect(provider)
 
-	const abi = fs.readFileSync('./SimpleStorage_sol_SimpleStorage.abi', 'utf8');
+	const abi = fs.readFileSync('./SimpleStorage_sol_SimpleStorage.abi', 'utf8')
 	const binary = fs.readFileSync(
 		'./SimpleStorage_sol_SimpleStorage.bin',
 		'utf8'
-	);
+	)
 
-	const contractFactory = new ethers.ContractFactory(abi, binary, wallet);
+	const contractFactory = new ethers.ContractFactory(abi, binary, wallet)
 
-	//   // Set a higher gas limit
+	// Set a higher gas limit
 	const overrides = {
-		gasPrice: 10000000000,
-		gasLimit: 6721975, // Use the same gasLimit as read from Ganache
-	};
-	console.log('Deploying.....');
+		// gasPrice: 10000000000,
+		// gasLimit: 6721975, // Use the same gasLimit as read from Ganache
+		gasLimit: 21000,
+		gasPrice: 250000000000,
+	}
+	console.log('Deploying.....')
 	// const estimatedGas = await contractFactory.estimatedGas.deploy();
-	const contract = await contractFactory.deploy(overrides);
-	const deploymentReceipt = await contract.deployTransaction.wait(1); // Wait for 1 block to confirm
-	// console.log(`\nAll contract info:`);
-	// console.log(contract);
-	console.log(`Contract deployed to ${contract.address}`);
+	// const contract = await contractFactory.deploy(overrides)
+	const contract = await contractFactory.deploy()
+	const deploymentReceipt = await contract.deployTransaction.wait(1) // Wait for 1 block to confirm
+	console.log(`Contract deployed to ${contract.address}`)
 
 	// console.log('Here is the transaction:');
 	// console.log(contract.deployTransaction);
@@ -67,18 +68,18 @@ async function main() {
 
 	// ##########################################################
 	//           INTERACT WITH CONTRACT
-	let currentFavNumber = await contract.retrieve();
-	console.log(`currentFavNumber: ${currentFavNumber.toString()}`);
+	let currentFavNumber = await contract.retrieve()
+	console.log(`currentFavNumber: ${currentFavNumber.toString()}`)
 
-	const transactionResponse = await contract.store('7');
-	const transactionReceipt = await transactionResponse.wait(1);
-	currentFavNumber = await contract.retrieve();
-	console.log(`currentFavNumber: ${currentFavNumber.toString()}`);
+	const transactionResponse = await contract.store('7')
+	const transactionReceipt = await transactionResponse.wait(1)
+	currentFavNumber = await contract.retrieve()
+	console.log(`currentFavNumber: ${currentFavNumber.toString()}`)
 }
 
 main()
 	.then(() => process.exit(0))
 	.catch((error) => {
-		console.error(error);
-		process.exit(1);
-	});
+		console.error(error)
+		process.exit(1)
+	})

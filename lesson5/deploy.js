@@ -57,18 +57,19 @@ function main() {
                     binary = fs.readFileSync('./SimpleStorage_sol_SimpleStorage.bin', 'utf8');
                     contractFactory = new ethers_1.ethers.ContractFactory(abi, binary, wallet);
                     overrides = {
-                        gasPrice: 10000000000,
-                        gasLimit: 6721975, // Use the same gasLimit as read from Ganache
+                        // gasPrice: 10000000000,
+                        // gasLimit: 6721975, // Use the same gasLimit as read from Ganache
+                        gasLimit: 21000,
+                        gasPrice: 250000000000,
                     };
                     console.log('Deploying.....');
-                    return [4 /*yield*/, contractFactory.deploy(overrides)];
+                    return [4 /*yield*/, contractFactory.deploy()];
                 case 2:
                     contract = _a.sent();
-                    return [4 /*yield*/, contract.deployTransaction.wait(1)];
+                    return [4 /*yield*/, contract.deployTransaction.wait(1)]; // Wait for 1 block to confirm
                 case 3:
-                    deploymentReceipt = _a.sent();
-                    // console.log(`\nAll contract info:`);
-                    // console.log(contract);
+                    deploymentReceipt = _a.sent() // Wait for 1 block to confirm
+                    ;
                     console.log("Contract deployed to ".concat(contract.address));
                     return [4 /*yield*/, contract.retrieve()];
                 case 4:

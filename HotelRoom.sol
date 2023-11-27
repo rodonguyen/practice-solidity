@@ -1,18 +1,19 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-
 contract HotelRoom {
     address payable public owner;
-    enum Statuses {Vacant, Occupied}
+    enum Statuses {
+        Vacant,
+        Occupied
+    }
     Statuses public currentStatus;
     event Occupy(address _occupant, uint _value);
 
-    constructor () {
+    constructor() {
         owner = payable(msg.sender);
         currentStatus = Statuses.Vacant;
     }
-
 
     modifier onlyWhileVacant() {
         require(currentStatus == Statuses.Vacant, "Currently occupied.");
