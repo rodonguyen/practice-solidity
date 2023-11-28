@@ -3,21 +3,21 @@ import * as fs from 'fs-extra'
 import 'dotenv/config'
 
 async function main() {
-	// const url = 'http://127.0.0.1:7545';
-	// const url = 'http://0.0.0.0:7545';
 	const url = process.env.RPC_URL
 	const provider = new ethers.providers.JsonRpcProvider(url)
-	// const wallet = new ethers.Wallet(process.env.PRIVATE_KEY!, provider);
+	const wallet = new ethers.Wallet(process.env.PRIVATE_KEY!, provider)
 
-	// CREATE WALLET FROM ENCRYPTED PRIVATE KEY
-	const encryptedJson: string = fs.readFileSync('.encryptedKey.json', 'utf8')
-	const password: string = process.env.PRIVATE_KEY_PASSWORD || ''
-	let wallet: Wallet = ethers.Wallet.fromEncryptedJsonSync(
-		encryptedJson,
-		password
-	)
-	wallet = await wallet.connect(provider)
-
+	// // ############################################################
+	// //         CREATE WALLET FROM ENCRYPTED PRIVATE KEY
+	// const encryptedJson: string = fs.readFileSync('.encryptedKey.json', 'utf8')
+	// const password: string = process.env.PRIVATE_KEY_PASSWORD || ''
+	// let wallet: Wallet = ethers.Wallet.fromEncryptedJsonSync(
+	// 	encryptedJson,
+	// 	password
+	// )
+	// wallet = await wallet.connect(provider)
+	// // ############################################################
+	//                    DEPLOY THE CONTRACT
 	const abi = fs.readFileSync('./SimpleStorage_sol_SimpleStorage.abi', 'utf8')
 	const binary = fs.readFileSync(
 		'./SimpleStorage_sol_SimpleStorage.bin',
@@ -28,15 +28,17 @@ async function main() {
 
 	// Set a higher gas limit
 	const overrides = {
-		// gasPrice: 10000000000,
-		// gasLimit: 6721975, // Use the same gasLimit as read from Ganache
-		gasLimit: 21000,
-		gasPrice: 250000000000,
+		// gasPrice: 10000000000, 	// For Ganache
+		// gasLimit: 6721975, 	// Use the same gasLimit as read from Ganache
+		gasLimit: 1000000, // For testnet, The number of gas needed for deploying this contract, can disable and let the blockchain determines itself
+		// gasPrice: ethers.utils.parseUnits('10', 'gwei'), // For testnet, invalid after EIP-1559 update
+		// maxFeePerGas: ethers.utils.parseUnits('20', 'gwei'),
+		// maxPriorityFeePerGas: ethers.utils.parseUnits('10', 'gwei'), 	// Enable to send faster, maybe
 	}
 	console.log('Deploying.....')
 	// const estimatedGas = await contractFactory.estimatedGas.deploy();
-	// const contract = await contractFactory.deploy(overrides)
-	const contract = await contractFactory.deploy()
+	const contract = await contractFactory.deploy(overrides)
+	// const contract = await contractFactory.deploy()
 	const deploymentReceipt = await contract.deployTransaction.wait(1) // Wait for 1 block to confirm
 	console.log(`Contract deployed to ${contract.address}`)
 
@@ -49,7 +51,7 @@ async function main() {
 	// console.log('\n\n\n\n\n\n============\nContract info:');
 
 	// #########################################################
-	// #################  SEND RAW TRANSACTION  ################
+	// //             SEND RAW TRANSACTION
 	// const nonce = await wallet.getTransactionCount();
 	// tx = {
 	// 	nonce: nonce,
@@ -65,13 +67,14 @@ async function main() {
 	// // let signTxResponse = await wallet.signTransaction(tx);
 	// const sentTxResponse = await wallet.sendTransaction(tx);
 	// console.log(`sentTxResponse: \n${sentTxResponse}`);
-
 	// ##########################################################
+
 	//           INTERACT WITH CONTRACT
 	let currentFavNumber = await contract.retrieve()
 	console.log(`currentFavNumber: ${currentFavNumber.toString()}`)
 
-	const transactionResponse = await contract.store('7')
+	let transactionResponse = await contract.store('999')
+	transactionResponse = await contract.addPerson('Rodo', '9999')
 	const transactionReceipt = await transactionResponse.wait(1)
 	currentFavNumber = await contract.retrieve()
 	console.log(`currentFavNumber: ${currentFavNumber.toString()}`)
