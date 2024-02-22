@@ -1,3 +1,20 @@
+# Rodo notebook
+
+23/12/2023:  
+
+deploy local (2 terminals): `yarn node` | `yarn hardhat deploy --network localhost`  
+`yarn hardhat deploy --network sepolia`  
+`yarn coverage`  
+
+Deploying BLOG and waiting for confirmations...
+deploying "Blog" (tx: 0xb499c5874ff8e1ce354be2734768014fcccb60b0473e441375ee1a38d5dc700c)...: deployed at 0x357196B89a4F5bD55dbA9C4dCF86D27568C2053A with 1175625 gas
+
+24/12/2023:
+
+
+
+
+
 # Hardhat Fund Me - Typescript Edition
 
 This is a section of the Javascript Blockchain/Smart Contract FreeCodeCamp Course.

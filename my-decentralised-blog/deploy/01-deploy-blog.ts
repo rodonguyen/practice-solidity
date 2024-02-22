@@ -26,13 +26,13 @@ const deployBlog: DeployFunction = async function (
     !developmentChains.includes(network.name) &&
     process.env.ETHERSCAN_API_KEY
   ) {
-    await verify(blog.address, [])
+    // await verify(blog.address, [])
   }
 }
 export default deployBlog
 deployBlog.tags = ["all", "blog"]
 
-// // With MockV3Aggregator
+// // With MockV3Aggregator / OLDER VERSION
 
 // const deployBlog: DeployFunction = async function (
 //   hre: HardhatRuntimeEnvironment
